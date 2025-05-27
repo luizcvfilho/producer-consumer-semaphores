@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <semaphore.h>
 #include <math.h>
+#include <time.h>
 
 long long int *BUFFER;
 int IN = 0;
@@ -77,6 +78,8 @@ void *consumidor(void *arg) {
 }
 
 int main(int argc, char *argv[]) {
+    double start;
+    double end;
     long long int N;
     long long int i;
     if (argc < 4) {
@@ -99,6 +102,8 @@ int main(int argc, char *argv[]) {
 
     pthread_create(&tid_prod, NULL, produtor, (void *) N);
 
+    start = clock();
+
     for (i = 0; i < C; i++) {
         pthread_create(&tid_cons[i], NULL, consumidor, (void *) i);
     }
@@ -115,8 +120,11 @@ int main(int argc, char *argv[]) {
             vencedor = i;
     }
 
+    end = clock();
+
     printf("Total de primos encontrados: %d\n", total_primos);
     printf("Consumidor vencedor: %d\n", vencedor + 1);
+    printf("Tempo: %.10f s\n", (end - start) / CLOCKS_PER_SEC);
 
     sem_destroy(&EMPTY);
     sem_destroy(&FULL);
